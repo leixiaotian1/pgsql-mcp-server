@@ -20,6 +20,7 @@ The server provides the following tools:
 - **write_query**: Execute INSERT, UPDATE, or DELETE queries on the PostgreSQL database
 - **create_table**: Create a new table in the PostgreSQL database
 - **list_tables**: List all user tables in the database (with optional schema filtering)
+- **explain_query**：EXPLAIN a query on the PostgreSQL database
 
 ## Installation
 
