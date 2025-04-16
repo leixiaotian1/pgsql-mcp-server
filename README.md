@@ -1,5 +1,15 @@
 # PostgreSQL MCP Server
 
+[![Build](https://github.com/mark3labs/mcp-go/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mark3labs/mcp-go/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mark3labs/mcp-go?cache)](https://goreportcard.com/report/github.com/mark3labs/mcp-go)
+[![GoDoc](https://pkg.go.dev/badge/github.com/mark3labs/mcp-go.svg)](https://pkg.go.dev/github.com/mark3labs/mcp-go)
+![Stars](https://img.shields.io/github/stars/leixiaotian1/pgsql-mcp-server)
+![Forks](https://img.shields.io/github/forks/leixiaotian1/pgsql-mcp-server)
+
+English | [中文](readme_zh_CH.md)
+
+
+
 A Model Context Protocol (MCP) server that provides tools for interacting with a PostgreSQL database. This server enables AI assistants to execute SQL queries, create tables, and list database tables through the MCP protocol.
 
 ## Features
