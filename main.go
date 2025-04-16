@@ -19,10 +19,11 @@ import (
 )
 
 var (
-	db         *sql.DB
-	writeStmt  = regexp.MustCompile(`(?i)^\s*(INSERT|UPDATE|DELETE)`)
-	selectStmt = regexp.MustCompile(`(?i)^\s*SELECT`)
-	createStmt = regexp.MustCompile(`(?i)^\s*CREATE TABLE`)
+	db          *sql.DB
+	writeStmt   = regexp.MustCompile(`(?i)^\s*(INSERT|UPDATE|DELETE)`)
+	selectStmt  = regexp.MustCompile(`(?i)^\s*SELECT`)
+	createStmt  = regexp.MustCompile(`(?i)^\s*CREATE TABLE`)
+	explainStmt = regexp.MustCompile(`(?i)^\s*EXPLAIN`)
 )
 
 type DB struct {
@@ -53,6 +54,7 @@ func main() {
 	s.AddTool(createWriteQueryTool(), writeQueryToolHandler)
 	s.AddTool(createCreateTableTool(), createTableToolHandler)
 	s.AddTool(createListTablesTool(), listTableToolHandler)
+	s.AddTool(createExplainQueryTool(), explainQueryToolHandler)
 
 	if err := server.ServeStdio(s); err != nil {
 		log.Printf("Server error: %v\n", err)
@@ -94,6 +96,17 @@ func createListTablesTool() mcp.Tool {
 		mcp.WithDescription("List all user tables in the database"),
 		mcp.WithString("schema",
 			mcp.Description("Optional schema name to filter tables"),
+		),
+	)
+}
+
+// 创建explain查询工具定义
+func createExplainQueryTool() mcp.Tool {
+	return mcp.NewTool("explain_query",
+		mcp.WithDescription("Explain a query execution plan on the postgres database"),
+		mcp.WithString("schema",
+			mcp.Required(),
+			mcp.Description("SQL query to explain，start with EXPLAIN"),
 		),
 	)
 }
@@ -223,6 +236,39 @@ func listTableToolHandler(ctx context.Context, request mcp.CallToolRequest) (*mc
 	}
 
 	return mcp.NewToolResultText(fmt.Sprintf("Tables: %v", tables)), nil
+}
+
+// explain查询处理函数
+func explainQueryToolHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	query, ok := request.Params.Arguments["schema"].(string)
+	if !ok {
+		return nil, errors.New("invalid schema parameter")
+	}
+
+	if !explainStmt.MatchString(query) {
+		return nil, errors.New("invalid explain schema parameter")
+	}
+
+	// 执行EXPLAIN查询
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		log.Printf("Explain error: %v\n", err)
+		return nil, fmt.Errorf("explain execution failed: %v", err)
+	}
+	defer rows.Close()
+
+	// 解析结果
+	var plan strings.Builder
+	for rows.Next() {
+		var line string
+		if err := rows.Scan(&line); err != nil {
+			return nil, fmt.Errorf("error scanning explain result: %v", err)
+		}
+		plan.WriteString(line)
+		plan.WriteString("\n")
+	}
+
+	return mcp.NewToolResultText(fmt.Sprintf("Execution plan:\n%s", plan.String())), nil
 }
 
 func parseSQLRows(rows *sql.Rows) ([]map[string]interface{}, error) {
