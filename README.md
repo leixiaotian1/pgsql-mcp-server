@@ -2,30 +2,41 @@
 ![Stars](https://img.shields.io/github/stars/leixiaotian1/pgsql-mcp-server)
 ![Forks](https://img.shields.io/github/forks/leixiaotian1/pgsql-mcp-server)
 
-English | [中文](readme_zh_CH.md)
+[中文](README.zh.md) | English
 
+# PostgreSQL MCP Server
 
+A Model Context Protocol (MCP) server that provides tools for interacting with a PostgreSQL database. It enables AI assistants to execute SQL queries, explain statements, create tables, and list database tables via the MCP protocol.
 
-A Model Context Protocol (MCP) server that provides tools for interacting with a PostgreSQL database. This server enables AI assistants to execute SQL queries, create tables, and list database tables through the MCP protocol.
+## ✨ Features
 
-## Features
+*   **Interact with Databases via AI:** Enables LLMs to perform database operations through a structured protocol.
+*   **Secure Toolset:** Separates read and write operations into distinct, authorizable tools (`read_query`, `write_query`).
+*   **Schema Management:** Allows for table creation (`create_table`) and listing (`list_tables`).
+*   **Query Analysis:** Provides a tool to analyze query execution plans (`explain_query`).
+*   **Multiple Transport Modes:** Supports `stdio`, Server-Sent Events (`sse`), and `streamableHttp` for flexible client integration.
+*   **Environment-Based Configuration:** Easily configurable using a `.env` file.
 
-The server provides the following tools:
+## 🛠️ Available Tools
 
-- **read_query**: Execute SELECT queries on the PostgreSQL database
-- **write_query**: Execute INSERT, UPDATE, or DELETE queries on the PostgreSQL database
-- **create_table**: Create a new table in the PostgreSQL database
-- **list_tables**: List all user tables in the database (with optional schema filtering)
-- **explain_query**：EXPLAIN a query on the PostgreSQL database
+The server exposes the following tools for MCP clients to invoke:
 
-## Installation
+| Tool Name       | Description                                                | Parameters                                                                   |
+| --------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `read_query`    | Executes a `SELECT` SQL query.                             | `query` (string, required): The `SELECT` statement to execute.               |
+| `write_query`   | Executes an `INSERT`, `UPDATE`, or `DELETE` SQL query.     | `query` (string, required): The `INSERT/UPDATE/DELETE` statement to execute. |
+| `create_table`  | Executes a `CREATE TABLE` SQL statement.                   | `schema` (string, required): The `CREATE TABLE` statement.                   |
+| `list_tables`   | Lists all user-created tables in the database.             | `schema` (string, optional): The schema name to filter tables by.            |
+| `explain_query` | Returns the execution plan for a given SQL query.          | `query` (string, required): The query to explain (must start with `EXPLAIN`).|
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
 - Go 1.23 or later
-- PostgreSQL database server
+- A PostgreSQL database server
 
-### Steps
+### Installation
 
 1. Clone the repository:
    ```bash
@@ -38,14 +49,14 @@ The server provides the following tools:
    go mod download
    ```
 
-3. Build the server:
+3. Build the MCP server:
    ```bash
    go build -o sql-mcp-server
    ```
 
 ## Configuration
 
-The server requires database connection details through environment variables. Create a `.env` file in the project root with the following variables:
+The `pg-mcp-server` requires database connection details to be provided via environment variables. Create a `.env` file in the project root with the following variables:
 
 ```
 DB_HOST=localhost      # PostgreSQL server host
@@ -54,6 +65,7 @@ DB_NAME=postgres       # Database name
 DB_USER=your_username  # Database user
 DB_PASSWORD=your_pass  # Database password
 DB_SSLMODE=disable     # SSL mode (disable, require, verify-ca, verify-full)
+SERVER_MODE=stdio      # Server mode (stdio, sse, streamableHttp)
 ```
 
 ## Usage
@@ -66,7 +78,7 @@ DB_SSLMODE=disable     # SSL mode (disable, require, verify-ca, verify-full)
 
 ### MCP Configuration
 
-To use this server with an AI assistant that supports MCP, add the following to your MCP configuration:
+To use this server with an MCP-enabled AI assistant, add the following to your MCP configuration:
 
 ```json
 {
@@ -80,7 +92,8 @@ To use this server with an AI assistant that supports MCP, add the following to 
         "DB_NAME": "postgres",
         "DB_USER": "your_username",
         "DB_PASSWORD": "your_password",
-        "DB_SSLMODE": "disable"
+        "DB_SSLMODE": "disable",
+        "SERVER_MODE": "stdio"
       },
       "disabled": false,
       "autoApprove": []
@@ -88,116 +101,126 @@ To use this server with an AI assistant that supports MCP, add the following to 
   }
 }
 ```
+---
 
-### Tool Examples
 
-#### List Tables
+### DOCKER DEPLOYMENT
 
-List all user tables in the database:
+<details>
+<summary><strong>Click to expand Docker Deployment Guide</strong></summary>
 
-```json
-{
-  "server_name": "pgsql-mcp-server",
-  "tool_name": "list_tables",
-  "arguments": {}
-}
-```
 
-List tables in a specific schema:
+#### Prerequisites
 
-```json
-{
-  "server_name": "pgsql-mcp-server",
-  "tool_name": "list_tables",
-  "arguments": {
-    "schema": "public"
-  }
-}
-```
+- Docker installed
 
-#### Create Table
+#### Deployment Steps
 
-Create a new table:
+1.  **Clone the project**
+    ```bash
+    git clone https://github.com/leixiaotian1/pgsql-mcp-server.git
+    cd pgsql-mcp-server
+    ```
 
-```json
-{
-  "server_name": "pgsql-mcp-server",
-  "tool_name": "create_table",
-  "arguments": {
-    "schema": "CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(100), email VARCHAR(100) UNIQUE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
-  }
-}
-```
+2.  **Configure `.env` file**
+    
+    Create a `.env` file in the project root directory. This file stores database connection information. **Ensure the `DB_HOST` value matches the database container name you'll start later.**
+    
+    ```properties
+    DB_HOST=postgres
+    DB_PORT=5432
+    DB_NAME=postgres
+    DB_USER=user
+    DB_PASSWORD=password
+    DB_SSLMODE=disable
+    SERVER_MODE=sse
+    ```
 
-#### Read Query
+3.  **Create Docker network**
 
-Execute a SELECT query:
+    To enable communication between the application container and database container, create a shared Docker network. This command only needs to run once.
+    ```bash
+    docker network create sql-mcp-network
+    ```
 
-```json
-{
-  "server_name": "pgsql-mcp-server",
-  "tool_name": "read_query",
-  "arguments": {
-    "query": "SELECT * FROM users LIMIT 10"
-  }
-}
-```
+4.  **Start PostgreSQL database container**
 
-#### Write Query
+    Use this command to start a PostgreSQL container and connect it to our network.
+    
+    > **Note:**
+    > - `--name postgres-dbpsk`: Container name, must exactly match the `DB_HOST` in your `.env` file.
+    > - `--network sql-mcp-network`: Connect to the shared network.
+    > - `-p 5432:5432`: Maps host's `5432` port to container's `5432` port. This means you can connect from your computer (e.g., using DBeaver) via `localhost:5432`, while the app container will access `5432` port directly through the internal network.
 
-Execute an INSERT query:
+    ```bash
+    docker run -d \
+      --name postgres \
+      --network sql-mcp-network \
+      -e POSTGRES_USER=user \
+      -e POSTGRES_PASSWORD=password \
+      -e POSTGRES_DB=postgres \
+      -p 5432:5432 \
+      postgres
+    ```
 
-```json
-{
-  "server_name": "pgsql-mcp-server",
-  "tool_name": "write_query",
-  "arguments": {
-    "query": "INSERT INTO users (name, email) VALUES ('John Doe', 'john@example.com')"
-  }
-}
-```
+5.  **Build and run the application**
 
-Execute an UPDATE query:
+    Now you can use commands from the `Makefile` to manage the application.
 
-```json
-{
-  "server_name": "pgsql-mcp-server",
-  "tool_name": "write_query",
-  "arguments": {
-    "query": "UPDATE users SET name = 'Jane Doe' WHERE id = 1"
-  }
-}
-```
+    - **Build image and run container:**
+      ```bash
+      make build
+      make run
+      ```
+      This will automatically stop old containers, build a new image, and start a new container.
 
-Execute a DELETE query:
+    - **View application logs:**
+      ```bash
+      make logs
+      ```
+      If you see `Successfully connected to database`, everything is working correctly.
 
-```json
-{
-  "server_name": "pgsql-mcp-server",
-  "tool_name": "write_query",
-  "arguments": {
-    "query": "DELETE FROM users WHERE id = 1"
-  }
-}
-```
+    - **Stop the application:**
+      ```bash
+      make stop
+      ```
 
-## Security Considerations
+</details>
 
-- The server validates query types to ensure that only appropriate operations are performed with each tool.
-- Input sanitization is performed for schema names to prevent SQL injection.
-- Consider using a dedicated database user with limited permissions for this server.
-- In production environments, enable SSL by setting `DB_SSLMODE` to `require` or higher.
 
-## Dependencies
+---
 
-- [github.com/joho/godotenv](https://github.com/joho/godotenv) - For loading environment variables from .env file
-- [github.com/lib/pq](https://github.com/lib/pq) - PostgreSQL driver for Go
-- [github.com/mark3labs/mcp-go](https://github.com/mark3labs/mcp-go) - Go SDK for Model Context Protocol
+## 🔌 Server Modes
 
-## License
+You can select the transport protocol by setting the `SERVER_MODE` environment variable.
 
-[Add license information here]
+### `stdio`
 
-## Contributing
+The server communicates over standard input and output. This is the default mode and is ideal for local testing or direct integration with command-line-based MCP clients.
 
-[Add contribution guidelines here]
+### `sse`
+
+The server communicates using Server-Sent Events (SSE). When this mode is enabled, the server will start an HTTP service and listen for connections.
+
+*   **SSE Endpoint:** `http://localhost:8088/sse`
+*   **Message Endpoint:** `http://localhost:8088/message`
+
+### `streamableHttp`
+
+The server uses the Streamable HTTP transport, a more modern and flexible HTTP-based transport for MCP.
+
+*   **Endpoint:** `http://localhost:8088/mcp`
+
+## 🤝 Contributing
+
+Contributions are welcome! If you find any bugs, have feature requests, or suggestions for improvement, please feel free to submit a Pull Request or open an Issue.
+
+1.  Fork the Project.
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the Branch (`git push origin feature/AmazingFeature`).
+5.  Open a Pull Request.
+
+## 📄 License
+
+This project is open source and is licensed under the MIT License.
