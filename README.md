@@ -2,7 +2,7 @@
 ![Stars](https://img.shields.io/github/stars/leixiaotian1/pgsql-mcp-server)
 ![Forks](https://img.shields.io/github/forks/leixiaotian1/pgsql-mcp-server)
 
-[中文](README.zh.md) | English
+[中文](readme_zh_CH.md) | English
 
 # PostgreSQL MCP Server
 
