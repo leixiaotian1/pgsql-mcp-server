@@ -4,7 +4,6 @@
 
 中文 | [English](README.md)
 
-# PostgreSQL MCP 服务器
 
 一个提供PostgreSQL数据库交互工具的模型上下文协议(MCP)服务。该服务使AI助手能够通过MCP协议执行SQL查询、解释sql语句、创建表和列出数据库表。
 
