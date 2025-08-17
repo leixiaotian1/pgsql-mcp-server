@@ -4,8 +4,6 @@
 
 [中文](readme_zh_CH.md) | English
 
-# PostgreSQL MCP Server
-
 A Model Context Protocol (MCP) server that provides tools for interacting with a PostgreSQL database. It enables AI assistants to execute SQL queries, explain statements, create tables, and list database tables via the MCP protocol.
 
 ## ✨ Features
