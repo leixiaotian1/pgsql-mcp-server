@@ -22,8 +22,8 @@ run: stop
 
 ## 停止并删除容器
 stop:
-	-@docker stop $(DOCKER_CONTAINER) 2>null || exit 0
-	-@docker rm $(DOCKER_CONTAINER) 2>null || exit 0
+	-@docker stop $(DOCKER_CONTAINER) >/dev/null 2>&1 || true
+	-@docker rm $(DOCKER_CONTAINER) >/dev/null 2>&1 || true
 
 
 ## 查看容器日志
@@ -32,4 +32,4 @@ logs:
 
 ## 清理镜像和容器
 clean: stop
-	-@docker rmi $(DOCKER_IMAGE) 2>/dev/null || true
+	-@docker rmi $(DOCKER_IMAGE) >/dev/null 2>&1 || true
