@@ -146,7 +146,7 @@ To use this server with an MCP-enabled AI assistant, add the following to your M
     Use this command to start a PostgreSQL container and connect it to our network.
     
     > **Note:**
-    > - `--name postgres-dbpsk`: Container name, must exactly match the `DB_HOST` in your `.env` file.
+    > - `--name postgres`: Container name, must exactly match the `DB_HOST` in your `.env` file.
     > - `--network sql-mcp-network`: Connect to the shared network.
     > - `-p 5432:5432`: Maps host's `5432` port to container's `5432` port. This means you can connect from your computer (e.g., using DBeaver) via `localhost:5432`, while the app container will access `5432` port directly through the internal network.
 
