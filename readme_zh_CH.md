@@ -144,7 +144,7 @@ SERVER_MODE=stdio      # 通信方式(stdio, sse, streamableHttp)
     使用以下命令启动一个 PostgreSQL 容器，并将其连接到我们刚创建的网络。
     
     > **注意:**
-    > - `--name postgres-dbpsk`：容器的名称，必须与 `.env` 文件中的 `DB_HOST` 完全匹配。
+    > - `--name postgres`：容器的名称，必须与 `.env` 文件中的 `DB_HOST` 完全匹配。
     > - `--network sql-mcp-network`：连接到共享网络。
     > - `-p 5432:5432`：将主机的 `5432` 端口映射到容器的 `5432` 端口。这意味着您可以从您的电脑（例如使用 DBeaver）通过 `localhost:5432` 连接数据库，而应用容器将通过内部网络直接访问 `5432` 端口。
 
