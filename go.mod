@@ -1,8 +1,6 @@
-module github.com/sql-mcp-server
+module github.com/leixiaotian1/pgsql-mcp-server
 
 go 1.23
-
-toolchain go1.24.1
 
 require (
 	github.com/joho/godotenv v1.5.1
