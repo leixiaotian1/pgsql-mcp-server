@@ -1,4 +1,5 @@
 # PostgreSQL MCP Server
+[![GoDoc](https://pkg.go.dev/badge/github.com/leixiaotian1/pgsql-mcp-server/.svg)](https://pkg.go.dev/github.com/leixiaotian1/pgsql-mcp-server/)
 ![Stars](https://img.shields.io/github/stars/leixiaotian1/pgsql-mcp-server)
 ![Forks](https://img.shields.io/github/forks/leixiaotian1/pgsql-mcp-server)
 
