@@ -10,14 +10,14 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o sql-mcp-server .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o pgsql-mcp-server .
 
 
 FROM alpine:latest
 
-COPY --from=builder /app/sql-mcp-server /usr/local/bin/sql-mcp-server
+COPY --from=builder /app/pgsql-mcp-server /usr/local/bin/pgsql-mcp-server
 
 EXPOSE 8088
 
-CMD ["sql-mcp-server"]
+CMD ["pgsql-mcp-server"]
 

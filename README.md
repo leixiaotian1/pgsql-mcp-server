@@ -39,8 +39,8 @@ The server exposes the following tools for MCP clients to invoke:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/sql-mcp-server.git
-   cd sql-mcp-server
+   git clone https://github.com/leixiaotian1/pgsql-mcp-server.git
+   cd pgsql-mcp-server
    ```
 
 2. Install dependencies:
@@ -50,7 +50,7 @@ The server exposes the following tools for MCP clients to invoke:
 
 3. Build the MCP server:
    ```bash
-   go build -o sql-mcp-server
+   go build -o pgsql-mcp-server
    ```
 
 ## Configuration
@@ -72,7 +72,7 @@ SERVER_MODE=stdio      # Server mode (stdio, sse, streamableHttp)
 ### Running the Server
 
 ```bash
-./sql-mcp-server
+./pgsql-mcp-server
 ```
 
 ### MCP Configuration
@@ -83,7 +83,7 @@ To use this server with an MCP-enabled AI assistant, add the following to your M
 {
   "mcpServers": {
     "pgsql-mcp-server": {
-      "command": "/path/to/sql-mcp-server",
+      "command": "/path/to/pgsql-mcp-server",
       "args": [],
       "env": {
         "DB_HOST": "localhost",

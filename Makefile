@@ -1,4 +1,4 @@
-APP_NAME=sql-mcp-server
+APP_NAME=pgsql-mcp-server
 APP_PORT=8088
 DOCKER_IMAGE=$(APP_NAME):latest
 DOCKER_CONTAINER=$(APP_NAME)-container

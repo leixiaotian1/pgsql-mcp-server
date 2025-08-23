@@ -33,7 +33,7 @@ func main() {
 	defer db.Close()
 
 	s := server.NewMCPServer(
-		"sql-mcp-server 🚀",
+		"pgsql-mcp-server 🚀",
 		"1.0.0",
 	)
 

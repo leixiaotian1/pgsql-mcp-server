@@ -40,7 +40,7 @@
 1. 克隆仓库：
    ```bash
    git clone https://github.com/leixiaotian1/pgsql-mcp-server.git
-   cd sql-mcp-server
+   cd pgsql-mcp-server
    ```
 
 2. 安装依赖：
@@ -50,7 +50,7 @@
 
 3. 构建mcp server：
    ```bash
-   go build -o sql-mcp-server
+   go build -o pgsql-mcp-server
    ```
 
 ## 配置
@@ -72,7 +72,7 @@ SERVER_MODE=stdio      # 通信方式(stdio, sse, streamableHttp)
 ### 运行服务器
 
 ```bash
-./sql-mcp-server
+./pgsql-mcp-server
 ```
 
 ### MCP配置
@@ -83,7 +83,7 @@ SERVER_MODE=stdio      # 通信方式(stdio, sse, streamableHttp)
 {
   "mcpServers": {
     "pgsql-mcp-server": {
-      "command": "/path/to/sql-mcp-server",
+      "command": "/path/to/pgsql-mcp-server",
       "args": [],
       "env": {
         "DB_HOST": "localhost",
