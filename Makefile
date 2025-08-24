@@ -2,8 +2,9 @@ APP_NAME=pgsql-mcp-server
 APP_PORT=8088
 DOCKER_IMAGE=$(APP_NAME):latest
 DOCKER_CONTAINER=$(APP_NAME)-container
-DOCKER_NETWORK=my-app-network
+DOCKER_NETWORK=pgsql-mcp-server-network
 ENV_FILE=.env
+DB_HOST=postgres-shanekAI
 
 .PHONY: build run stop logs clean
 
@@ -13,6 +14,8 @@ build:
 
 ## 运行容器（加载 .env 文件，映射端口）
 run: stop
+	-@docker network inspect $(DOCKER_NETWORK) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK)
+	docker network connect $(DOCKER_NETWORK) $(DB_HOST)
 	docker run -d \
 	    --network=$(DOCKER_NETWORK) \
 		--name $(DOCKER_CONTAINER) \
